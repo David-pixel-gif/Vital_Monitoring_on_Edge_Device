@@ -1,0 +1,32 @@
+{
+  "name": "vital-monitor",
+  "private": true,
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.22.0",
+    "react-scripts": "5.0.1"
+  },
+  "scripts": {
+    "start": "concurrently -k -n BACKEND,FRONTEND -c blue,magenta \"npm run start:backend\" \"npm run start:frontend\"",
+    "start:frontend": "react-scripts start",
+    "start:backend": "node scripts/start-backend.js",
+    "build": "react-scripts build",
+    "test": "react-scripts test --watchAll=false"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

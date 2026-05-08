@@ -25,22 +25,21 @@ function facilityRows(context) {
 
 export default function OverviewPage() {
   const context = useVitalPulse();
-  const { latestReading, trendSamples, alerts, derived } = context;
+  const { latestReading, trendSamples, alerts, derived, patients, devices, history, systemStatus } = context;
 
-  const readingRows = latestReading
-    ? [
-        {
-          id: latestReading.timestamp,
-          patientId: "Not linked",
-          deviceId: latestReading.device_id || "Unavailable",
-          heartRate: formatMetric(latestReading.heart_rate, "bpm"),
-          spo2: formatMetric(latestReading.spo2, "%"),
-          temperature: formatMetric(latestReading.temperature, "deg C"),
-          timestamp: formatDateTime(latestReading.timestamp),
-          status: derived.deviceState,
-        },
-      ]
-    : [];
+  const readingRows = history
+    .filter((item) => item.event_type === "reading")
+    .slice(0, 5)
+    .map((item, index) => ({
+      id: `${item.timestamp}-${index}`,
+      patientId: item.patient_id || "Not linked",
+      deviceId: item.device_id || "Unavailable",
+      heartRate: item.heart_rate ? formatMetric(item.heart_rate, "bpm") : "-",
+      spo2: item.spo2 ? formatMetric(item.spo2, "%") : "-",
+      temperature: item.temperature ? formatMetric(item.temperature, "deg C") : "-",
+      timestamp: formatDateTime(item.timestamp),
+      status: item.risk_status || derived.deviceState,
+    }));
 
   return (
     <AppShell>
@@ -50,11 +49,11 @@ export default function OverviewPage() {
       />
 
       <div className="vp-grid vp-grid-metrics">
-        <MetricCard icon="patients" label="Monitored Patients" value="Pending" helper="Patient registry endpoint not available" status="Pending" />
-        <MetricCard icon="devices" label="Active Devices" value={derived.observedDevices.length || "0"} helper="Observed from incoming telemetry" status={derived.deviceState} />
+        <MetricCard icon="patients" label="Monitored Patients" value={patients.length} helper="Patient registry records" status={patients.length ? "Loaded" : "Pending"} />
+        <MetricCard icon="devices" label="Active Devices" value={systemStatus?.active_devices ?? devices.length} helper="Observed and registered devices" status={derived.deviceState} />
         <MetricCard icon="heart" label="Latest Readings" value={trendSamples.length} helper={latestReading ? formatDateTime(latestReading.timestamp) : "No reading received"} status={latestReading ? "Loaded" : "Pending"} />
         <MetricCard icon="alerts" label="Open Alerts" value={formatNumber(alerts.length, "0")} helper="Current alert feed" status={alerts.length ? "Open" : "Resolved"} />
-        <MetricCard icon="spark" label="System Status" value={derived.mlAvailable ? "Monitoring active" : "Awaiting live score"} helper={latestReading ? `Risk ${derived.riskLabel}` : "No live device reading"} status={derived.mlAvailable ? "Loaded" : "Pending"} accent="ai" />
+        <MetricCard icon="spark" label="System Status" value={systemStatus?.system_status || (derived.mlAvailable ? "Monitoring active" : "Awaiting live score")} helper={latestReading ? `Risk ${derived.riskLabel}` : "No live device reading"} status={derived.mlAvailable ? "Loaded" : "Pending"} accent="ai" />
       </div>
 
       <div className="vp-grid-two">

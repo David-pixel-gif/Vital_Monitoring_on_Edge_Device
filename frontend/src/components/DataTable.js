@@ -1,7 +1,7 @@
 import EmptyState from "./EmptyState";
 import StatusBadge from "./StatusBadge";
 
-export default function DataTable({ columns, rows, emptyTitle, emptyMessage }) {
+export default function DataTable({ columns, rows, emptyTitle, emptyMessage, selectedRowId, onRowClick }) {
   if (!rows.length) {
     return <EmptyState title={emptyTitle} message={emptyMessage} icon="empty" />;
   }
@@ -18,7 +18,18 @@ export default function DataTable({ columns, rows, emptyTitle, emptyMessage }) {
         </thead>
         <tbody>
           {rows.map((row, index) => (
-            <tr key={row.id || index}>
+            <tr
+              key={row.id || index}
+              className={`vp-table-row ${selectedRowId && selectedRowId === (row.id || index) ? "is-selected" : ""}`.trim()}
+              onClick={onRowClick ? () => onRowClick(row) : undefined}
+              tabIndex={onRowClick ? 0 : undefined}
+              onKeyDown={onRowClick ? (event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  onRowClick(row);
+                }
+              } : undefined}
+            >
               {columns.map((column) => {
                 const value = row[column.key];
                 if (column.type === "badge") {

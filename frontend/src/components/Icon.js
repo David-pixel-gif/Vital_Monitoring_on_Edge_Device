@@ -54,6 +54,14 @@ export default function Icon({ name, size = 18, className = "" }) {
       return <svg {...common}><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>;
     case "logout":
       return <svg {...common}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><path d="m16 17 5-5-5-5" /><path d="M21 12H9" /></svg>;
+    case "menu":
+      return <svg {...common}><path d="M4 7h16M4 12h16M4 17h16" /></svg>;
+    case "close":
+      return <svg {...common}><path d="M6 6 18 18M18 6 6 18" /></svg>;
+    case "chevronDown":
+      return <svg {...common}><path d="m6 9 6 6 6-6" /></svg>;
+    case "chevronUp":
+      return <svg {...common}><path d="m6 15 6-6 6 6" /></svg>;
     default:
       return <svg {...common}><circle cx="12" cy="12" r="9" /></svg>;
   }

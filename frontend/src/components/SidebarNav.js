@@ -13,9 +13,9 @@ const NAV_ITEMS = [
   { to: "/settings", label: "Settings / Maintenance", icon: "settings" },
 ];
 
-export default function SidebarNav() {
+export default function SidebarNav({ onNavigate, mobile = false }) {
   return (
-    <aside className="vp-sidebar">
+    <aside className={`vp-sidebar ${mobile ? "is-mobile" : ""}`.trim()}>
       <div className="vp-brand">
         <div className="vp-brand-mark">VP</div>
         <div>
@@ -23,15 +23,19 @@ export default function SidebarNav() {
           <span>Zimbabwe Rural Care</span>
         </div>
       </div>
+      <div className="vp-nav-section-label">Navigation</div>
       <nav className="vp-nav">
         {NAV_ITEMS.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
+            onClick={onNavigate}
             className={({ isActive }) => `vp-nav-item ${isActive ? "is-active" : ""}`}
           >
-            <Icon name={item.icon} size={18} />
-            <span>{item.label}</span>
+            <span className="vp-nav-item-icon">
+              <Icon name={item.icon} size={18} />
+            </span>
+            <span className="vp-nav-item-label">{item.label}</span>
           </NavLink>
         ))}
       </nav>

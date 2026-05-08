@@ -16,7 +16,7 @@ export default function ExportCard({ exportItem }) {
           <div><dt>Last export</dt><dd>{exportItem.lastExported}</dd></div>
         </dl>
       </div>
-      <PrimaryButton variant="secondary" disabled={exportItem.disabled}>
+      <PrimaryButton variant="secondary" disabled={exportItem.disabled} onClick={exportItem.onClick}>
         {exportItem.disabled ? "Endpoint required" : "Export"}
       </PrimaryButton>
     </div>

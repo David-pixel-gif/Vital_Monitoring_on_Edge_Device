@@ -10,7 +10,7 @@
   "scripts": {
     "start": "concurrently -k -n BACKEND,FRONTEND -c blue,magenta \"npm run start:backend\" \"npm run start:frontend\"",
     "start:frontend": "react-scripts start",
-    "start:backend": "node scripts/start-backend.js",
+    "start:backend": "powershell -NoProfile -Command \"& 'C:\\Program Files\\PostgreSQL\\18\\pgAdmin 4\\python\\python.exe' '..\\backend\\run_backend.py' runserver\"",
     "build": "react-scripts build",
     "test": "react-scripts test --watchAll=false"
   },

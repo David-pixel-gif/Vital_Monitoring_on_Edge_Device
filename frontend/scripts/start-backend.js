@@ -4,16 +4,18 @@ const { spawn, spawnSync } = require("child_process");
 
 const frontendRoot = path.resolve(__dirname, "..");
 const backendRoot = path.resolve(frontendRoot, "..", "backend");
-const managePy = path.join(backendRoot, "manage.py");
+const backendBootstrap = path.join(backendRoot, "run_backend.py");
 const venvPython = path.join(backendRoot, "myenv", "Scripts", "python.exe");
 const candidates = [
   { command: venvPython, args: [] },
+  { command: "C:\\Program Files\\PostgreSQL\\18\\pgAdmin 4\\python\\python.exe", args: [] },
+  { command: "C:\\Program Files\\MySQL\\MySQL Workbench 8.0\\python.exe", args: [] },
   { command: "python", args: [] },
   { command: "py", args: ["-3"] },
 ];
 
-if (!existsSync(managePy)) {
-  console.error(`Backend startup failed: manage.py not found at ${managePy}`);
+if (!existsSync(backendBootstrap)) {
+  console.error(`Backend startup failed: run_backend.py not found at ${backendBootstrap}`);
   process.exit(1);
 }
 
@@ -23,9 +25,16 @@ function resolvePython() {
       path.isAbsolute(candidate.command) && !existsSync(candidate.command);
     if (commandLooksMissing) continue;
 
+    const probeCommand = [
+      `& '${candidate.command}'`,
+      ...candidate.args.map((arg) => `'${arg}'`),
+      `'${backendBootstrap}'`,
+      "check",
+    ].join(" ");
+
     const probe = spawnSync(
-      candidate.command,
-      [...candidate.args, "-c", "import sys; print(sys.executable)"],
+      "powershell.exe",
+      ["-NoProfile", "-Command", probeCommand],
       {
         cwd: backendRoot,
         encoding: "utf8",
@@ -52,8 +61,17 @@ if (!python) {
 }
 
 const child = spawn(
-  python.command,
-  [...python.args, managePy, "runserver"],
+  "powershell.exe",
+  [
+    "-NoProfile",
+    "-Command",
+    [
+      `& '${python.command}'`,
+      ...python.args.map((arg) => `'${arg}'`),
+      `'${backendBootstrap}'`,
+      "runserver",
+    ].join(" "),
+  ],
   {
     cwd: backendRoot,
     stdio: "inherit",
